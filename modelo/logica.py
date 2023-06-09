@@ -5,7 +5,7 @@ import torch
 
 # Crear el objeto MinMaxScaler
 scaler = MinMaxScaler()
-Data=pd.read_csv("./data/Datos_Transformados.csv")
+Data=pd.read_csv("./modelo/Datos_Transformados.csv")
 # Ajustar y transformar los datos
 Data['Total stops'] = scaler.fit_transform(Data[['Total stops']])
 Data['Departure_Day'] = scaler.fit_transform(Data[['Departure_Day']])
@@ -13,7 +13,7 @@ Data['Departure_Month'] = scaler.fit_transform(Data[['Departure_Month']])
 Data['Departure_Year'] = scaler.fit_transform(Data[['Departure_Year']])
 Data['Price'] = scaler.fit_transform(Data[['Price']])
 
-model = torch.jit.load('model_scripted.pt')
+model = torch.jit.load('./modelo/modelo_precios_boleto.pt')
 model.eval()
 
 # Ajustar y transformar los datos
