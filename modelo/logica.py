@@ -1,20 +1,8 @@
-from sklearn.preprocessing import MinMaxScaler
-import pandas as pd
 import numpy as np
-import torch
+from datetime import datetime
+from datetime import timedelta
+from Prediccion import Predic
 
-# Crear el objeto MinMaxScaler
-scaler = MinMaxScaler()
-Data=pd.read_csv("./modelo/Datos_Transformados.csv")
-# Ajustar y transformar los datos
-Data['Total stops'] = scaler.fit_transform(Data[['Total stops']])
-Data['Departure_Day'] = scaler.fit_transform(Data[['Departure_Day']])
-Data['Departure_Month'] = scaler.fit_transform(Data[['Departure_Month']])
-Data['Departure_Year'] = scaler.fit_transform(Data[['Departure_Year']])
-Data['Price'] = scaler.fit_transform(Data[['Price']])
-
-model = torch.jit.load('./modelo/modelo_precios_boleto.pt')
-model.eval()
 
 # Ajustar y transformar los datos
 def Normalizar(paradas,dia,mes,year):
@@ -23,6 +11,7 @@ def Normalizar(paradas,dia,mes,year):
     day_min,day_max=1,31
     mount_min,mount_max=2,4
     year_min,year_max=2022.0,2022
+    #Normalizacion
     paradas=(paradas-min_parada)/(max_parada-min_parada)
     dia=(dia-day_min)/(day_max-day_min)
     mes=(mes-mount_min)/(mount_max-mount_min)
@@ -30,10 +19,10 @@ def Normalizar(paradas,dia,mes,year):
         year= (year-year_min)/(year_max-year_min)
     except:
         year=0
-
-
     return [paradas,dia,mes,year]
 
+# se encarga de procesar los datos y generar un array normalizado
+# para aerolinea,source,destino
 def preparacion_datos(aerolinea,source,destino):
        aero="Air_"+aerolinea
        source="Source_"+source
@@ -53,16 +42,29 @@ def preparacion_datos(aerolinea,source,destino):
        lista_source=np.zeros(4)
        lista_destino=np.zeros(4)
        lista_aero[valor_aero] = 1
-       lista_source[valor_source]=1
-       lista_destino[valor_destino]=1
+       lista_source[valor_source]= 1
+       lista_destino[valor_destino]= 1
        return list(lista_aero)+list(lista_source)+list(lista_destino)
 
-def Predic(aerolinea,source,Destino,escalas,fecha_day,fecha_mes,fecha_year):
-    datos_1=preparacion_datos(aerolinea,source,Destino)
-    datos_2=Normalizar(escalas,fecha_day,fecha_mes,fecha_year)
-    lista=datos_1+datos_2
-    lista_datos = [float(valor) for valor in lista]
-    device = torch.device('cpu')
-    S = torch.tensor(lista_datos, device=device)
-    a=model(S).detach().numpy()
-    return scaler.inverse_transform([a])[0][0]
+# genera un arrreglo con fechas a predecir
+def Fecha(Fechas,cant_fechas):
+    fecha = datetime.strptime(Fechas, "%Y-%m-%d")
+    Fechas=[fecha+timedelta(days=i) for i in range(0,cant_fechas)]
+    return Fechas
+
+## Funcion a llamar
+def Datos_Pronostico(aerolinea,source,Destino,escalas,fecha,cant_fechas):
+     Datos_base=preparacion_datos(aerolinea,source,Destino)
+     Dates=Fecha(fecha,cant_fechas)
+     Datos_completos=[]
+     for date in Dates:
+          Datos_Normalizados=Normalizar(escalas,date.day,date.month,date.year)
+          Datos_completos.append(Datos_base+Datos_Normalizados)
+     return Predic(Datos_completos)
+    
+"""aerolinea='American Airlines'
+source='NYC'
+Destino='SVO'
+resultado=Datos_Pronostico(aerolinea,source,Destino,1,"2023-06-21",5)
+print(resultado)
+     """
