@@ -11,10 +11,11 @@ def insertar_usuario():
                     INSERT INTO usuarios (nombre,email,contraseña)
                     VALUES (%s, %s,%s);
                     """
-        cursor.execute(insert_sql, ("Eider", "EIDER@gmail.com","1234"))
+        cursor.execute(insert_sql, ("Miguel", "miguel@gmail.com","45685"))
         conn.commit()
         conn.close()
         return {"mensaje": "Usuario ingresado correctamente"}
+    
     except Exception as ex:
         print(ex)
 
