@@ -1,8 +1,9 @@
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
-from Prediccion import Predic
+from modelo.Prediccion import Predic
 
+### puerto 5432
 
 # Ajustar y transformar los datos
 def Normalizar(paradas,dia,mes,year):
