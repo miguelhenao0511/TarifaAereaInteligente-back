@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.conifg.database import SessionLocal
+from app.api.routers import user_router, flight_router
+from dotenv import load_dotenv
+
 from modelo.logica import Predic
 from datetime import datetime
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -43,3 +49,6 @@ async def get_flights(airline= None, source= None, destiny= None, steps= None, d
             "date": date,
             "price": 0
         }]
+    
+app.include_router(user_router.router)
+app.include_router(flight_router.router)
