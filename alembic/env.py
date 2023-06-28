@@ -2,7 +2,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from app.api.models import flight_route_model
+from app.api.models import flight_route_model, user_model, airline_model
 
 from alembic import context
 
@@ -19,7 +19,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = flight_route_model.Base.metadata
+target_metadata = [flight_route_model.Base.metadata, user_model.Base.metadata, airline_model.Base.metadata]
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

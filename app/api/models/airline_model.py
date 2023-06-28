@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 class AirlineModel(Base):
-    __tablename__ = "airlines"
+    __tablename__ = "airline"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
