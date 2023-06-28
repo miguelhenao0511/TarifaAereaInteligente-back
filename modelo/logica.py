@@ -61,11 +61,7 @@ def Datos_Pronostico(aerolinea,source,Destino,escalas,fecha,cant_fechas):
      for date in Dates:
           Datos_Normalizados=Normalizar(escalas,date.day,date.month,date.year)
           Datos_completos.append(Datos_base+Datos_Normalizados)
-     return Predic(Datos_completos)
-    
-"""aerolinea='American Airlines'
-source='NYC'
-Destino='SVO'
-resultado=Datos_Pronostico(aerolinea,source,Destino,1,"2023-06-21",5)
-print(resultado)
-     """
+     return flatten(Predic(Datos_completos).tolist())
+
+def flatten(array_list):
+    return [element for sublist in array_list for element in sublist]
