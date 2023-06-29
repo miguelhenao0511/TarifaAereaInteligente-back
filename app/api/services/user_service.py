@@ -9,8 +9,9 @@ def openConnection():
 
 def closeConnection():
     global db
-    db.close()
-    db = None
+    if db is not None:
+        db.close()
+        db = None
     
 def getById(id):
     user = db.query(UserModel).filter(UserModel.id == id).first()

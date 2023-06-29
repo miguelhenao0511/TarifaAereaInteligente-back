@@ -2,34 +2,39 @@ from fastapi import APIRouter, Request, Response
 from app.api.services import flight_route_service, airline_service, user_service
 from modelo.logica import Datos_Pronostico, Fecha
 from datetime import datetime
+import traceback
 
 router = APIRouter()
 
 @router.get("/airlines")
 def get_airlines(request: Request):
     auth = request.headers.get("Auth")
-    if (auth == None):
-        return airline_service.get_all()
     user_service.openConnection()
+    if (auth == None or auth == "undefined"):
+        return airline_service.get_all()
     user = user_service.getById(auth)
     if (user == None or user.active_subscription == False):
+        result = airline_service.get_all()
         user_service.closeConnection()
-        return airline_service.get_all()
+        return result
+    result = airline_service.get_all_with_subscription()
     user_service.closeConnection()
-    return airline_service.get_all_with_subscription()
+    return result
 
 @router.get("/routes")
 def get_routes(request: Request):
     auth = request.headers.get("Auth")
-    if (auth == None):
-        return flight_route_service.get_all()
     user_service.openConnection()
+    if (auth == None or  auth == "undefined"):
+        return flight_route_service.get_all()
     user = user_service.getById(auth)
     if (user == None or user.active_subscription == False):
+        result = flight_route_service.get_all()
         user_service.closeConnection()
-        return flight_route_service.get_all()
+        return result
+    result = flight_route_service.get_all_with_subscription()
     user_service.closeConnection()
-    return flight_route_service.get_all_with_subscription()
+    return result
 
 @router.post("/prices")
 async def get_routes(request: Request, response: Response):
@@ -55,6 +60,6 @@ async def get_routes(request: Request, response: Response):
             "dates": dates,
             "prices": predicts  
             }
-    except:
+    except Exception:
         response.status_code = 500    
-        return {"messages": "Failed to get prices"}
+        return {"messages": "Failed to get prices", "error": traceback.format_exc()}

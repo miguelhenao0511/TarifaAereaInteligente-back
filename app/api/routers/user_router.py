@@ -24,7 +24,7 @@ def logout():
 
 
 @router.post("/user")
-async def login(request: Request, response: Response):
+async def register(request: Request, response: Response):
     data = await request.json()
     user_service.openConnection()
     user = user_service.getByEmail(data["email"])
@@ -37,8 +37,18 @@ async def login(request: Request, response: Response):
     user_service.closeConnection()
     return {"message": "Email already exists!!"}
 
+@router.get("/user/{id}")
+async def getUser(request: Request, response: Response, id):
+    user_service.openConnection()
+    user = user_service.getById(id)
+    if (user != None):
+        return {"message": "Update user successfully!!", "user": user}        
+    response.status_code = 404
+    user_service.closeConnection()
+    return {"message": "User not found"}
+
 @router.put("/user/{id}")
-async def login(request: Request, response: Response, id):
+async def setUser(request: Request, response: Response, id):
     user_service.openConnection()
     user = user_service.getById(id)
     if (user != None):
