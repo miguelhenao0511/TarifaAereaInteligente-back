@@ -1,8 +1,17 @@
 from app.api.conifg.database import SessionLocal
 from app.api.models.user_model import UserModel
 
-db = SessionLocal()
 
+db = None
+def openConnection():
+    global db
+    db = SessionLocal()
+
+def closeConnection():
+    global db
+    db.close()
+    db = None
+    
 def getById(id):
     user = db.query(UserModel).filter(UserModel.id == id).first()
     return user

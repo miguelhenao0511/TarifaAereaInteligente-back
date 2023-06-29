@@ -11,7 +11,7 @@ def insertar_usuario():
                     INSERT INTO usuarios (nombre,email,contraseña)
                     VALUES (%s, %s,%s);
                     """
-        cursor.execute(insert_sql, ("Miguel", "miguel@gmail.com","45685"))
+        cursor.execute(insert_sql, ("Miguel", "miguel@gmail.com","123"))
         conn.commit()
         conn.close()
         return {"mensaje": "Usuario ingresado correctamente"}

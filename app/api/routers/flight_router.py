@@ -10,9 +10,12 @@ def get_airlines(request: Request):
     auth = request.headers.get("Auth")
     if (auth == None):
         return airline_service.get_all()
+    user_service.openConnection()
     user = user_service.getById(auth)
     if (user == None or user.active_subscription == False):
+        user_service.closeConnection()
         return airline_service.get_all()
+    user_service.closeConnection()
     return airline_service.get_all_with_subscription()
 
 @router.get("/routes")
@@ -20,9 +23,12 @@ def get_routes(request: Request):
     auth = request.headers.get("Auth")
     if (auth == None):
         return flight_route_service.get_all()
+    user_service.openConnection()
     user = user_service.getById(auth)
     if (user == None or user.active_subscription == False):
+        user_service.closeConnection()
         return flight_route_service.get_all()
+    user_service.closeConnection()
     return flight_route_service.get_all_with_subscription()
 
 @router.post("/prices")

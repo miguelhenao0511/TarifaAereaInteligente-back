@@ -8,5 +8,5 @@ def get_all():
     return flight_routes
 
 def get_all_with_subscription():
-    airlines = db.query(FlightRouteModel).all()
-    return airlines
+    flight_routes = db.query(FlightRouteModel).all()
+    return flight_routes
